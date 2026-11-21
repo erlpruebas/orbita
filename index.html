@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#141518" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>ÓRBITA — Sintetizador Diatónico Táctil</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./css/tokens.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/modals.css" />
+</head>
+<body>
+  <!-- Definición de Iconos SVG Hardware (100% Iconográfico en el panel principal) -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden;" aria-hidden="true">
+    <defs>
+      <!-- Engranaje (Configuración 50->9) -->
+      <symbol id="icon-gear" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </symbol>
+
+      <!-- Clave de Sol (Detector de Tonalidad por Micrófono) -->
+      <symbol id="icon-clef" viewBox="0 0 24 24">
+        <path d="M13 3c-2.5 0-4 2-4 4.2 0 3.2 5.5 4.8 5.5 8.8 0 2.2-1.8 3.8-4 3.8-2.4 0-4.2-1.7-4.2-4 0-1.9 1.4-3.3 3.2-3.3 1.5 0 2.5 1.1 2.5 2.4 0 1.1-.8 1.9-1.8 1.9"></path>
+        <path d="M12.5 2v19.5c0 1.1-.7 1.8-1.7 1.8-.8 0-1.4-.5-1.4-1.2"></path>
+      </symbol>
+
+      <!-- Eje Y: Filtro (paso bajo resonante) -->
+      <symbol id="icon-yaxis-filter" viewBox="0 0 24 24">
+        <path d="M3 7h8c3 0 4.5 2 6 5l4 8"></path>
+        <circle cx="13" cy="8" r="2"></circle>
+      </symbol>
+
+      <!-- Eje Y: Volumen (dinámica / swell) -->
+      <symbol id="icon-yaxis-volume" viewBox="0 0 24 24">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+        <path d="M19 5a10 10 0 0 1 0 14"></path>
+      </symbol>
+
+      <!-- Eje Y: Distorsión (drive / saturación) -->
+      <symbol id="icon-yaxis-drive" viewBox="0 0 24 24">
+        <path d="M2 16h4l3-8h6l3 8h4"></path>
+        <path d="M6 12h12"></path>
+      </symbol>
+
+      <!-- Key-Strike (⚡) -->
+      <symbol id="icon-bolt" viewBox="0 0 24 24">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </symbol>
+
+      <!-- Modo Melodía (1 nota corchea) -->
+      <symbol id="icon-mode-melody" viewBox="0 0 24 24">
+        <path d="M9 18V5l10-2v5"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+      </symbol>
+
+      <!-- Modo Acordes (3 notas apiladas) -->
+      <symbol id="icon-mode-chord" viewBox="0 0 24 24">
+        <circle cx="8" cy="18" r="2.3"></circle>
+        <circle cx="8" cy="12.5" r="2.3"></circle>
+        <circle cx="8" cy="7" r="2.3"></circle>
+        <path d="M10.3 18V4l8-1.5v4"></path>
+      </symbol>
+
+      <!-- Humanizador (pulso orgánico / rasgueo) -->
+      <symbol id="icon-humanize" viewBox="0 0 24 24">
+        <path d="M3 12h4l2.5-6 4 12 2.5-6H21"></path>
+      </symbol>
+
+      <!-- Reverb (ondas espaciales) -->
+      <symbol id="icon-reverb" viewBox="0 0 24 24">
+        <path d="M12 4v16"></path>
+        <path d="M8 7v10"></path>
+        <path d="M16 7v10"></path>
+        <path d="M4 10v4"></path>
+        <path d="M20 10v4"></path>
+      </symbol>
+
+      <!-- Acompañamiento Automático (escalones de arpegio) -->
+      <symbol id="icon-arp" viewBox="0 0 24 24">
+        <path d="M3 17h4v-5h4V7h4v5h4"></path>
+      </symbol>
+
+      <!-- Octava (teclado mini) -->
+      <symbol id="icon-octave" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+        <line x1="9" y1="5" x2="9" y2="19"></line>
+        <line x1="15" y1="5" x2="15" y2="19"></line>
+        <line x1="7" y1="5" x2="7" y2="12"></line>
+        <line x1="13" y1="5" x2="13" y2="12"></line>
+      </symbol>
+
+      <!-- Sonido / Timbre -->
+      <symbol id="icon-sound" viewBox="0 0 24 24">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </symbol>
+
+      <!-- Metrónomo -->
+      <symbol id="icon-metronome" viewBox="0 0 24 24">
+        <polygon points="6 20 10 4 14 4 18 20 6 20"></polygon>
+        <line x1="12" y1="16" x2="19" y2="7"></line>
+      </symbol>
+
+      <!-- Batería -->
+      <symbol id="icon-drum" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="9" rx="8" ry="3.5"></ellipse>
+        <path d="M4 9v7c0 1.9 3.6 3.5 8 3.5s8-1.6 8-3.5V9"></path>
+        <line x1="6" y1="3" x2="11" y2="8"></line>
+        <line x1="18" y1="3" x2="13" y2="8"></line>
+      </symbol>
+
+      <!-- Play / Stop / Rec / Trash -->
+      <symbol id="icon-play" viewBox="0 0 24 24">
+        <polygon points="7 5 19 12 7 19 7 5" fill="currentColor"></polygon>
+      </symbol>
+      <symbol id="icon-stop" viewBox="0 0 24 24">
+        <rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"></rect>
+      </symbol>
+      <symbol id="icon-rec" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="6" fill="#ef4444"></circle>
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+        <path d="M10 11v6"></path>
+        <path d="M14 11v6"></path>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+      </symbol>
+
+      <!-- Micrófono -->
+      <symbol id="icon-mic" viewBox="0 0 24 24">
+        <rect x="9" y="2" width="6" height="11" rx="3"></rect>
+        <path d="M5 10a7 7 0 0 0 14 0"></path>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+      </symbol>
+
+      <!-- QR / Móvil -->
+      <symbol id="icon-qr" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        <path d="M14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 18v3"></path>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- CHASIS PRINCIPAL ÓRBITA (#141518, 100dvh, cero recortes) -->
+  <div id="orbita-chassis">
+    <!-- BARRA SUPERIOR (HEADER) -->
+    <header class="hw-header">
+      <div class="brand-group">
+        <span class="power-led"></span>
+        <span class="brand-title">ÓRBITA</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Grabador de Maqueta (Voz Micrófono + Música ÓRBITA) -->
+        <button type="button" id="btn-demo-rec" class="hdr-btn hdr-btn-rec" aria-label="Grabar maqueta (voz y música)" title="Grabar maqueta (música + micrófono)">
+          <span class="led-dot" id="demo-rec-led"></span>
+          <svg viewBox="0 0 24 24"><use href="#icon-mic"></use></svg>
+          <span id="demo-rec-timer" class="demo-rec-timer" hidden>0:00</span>
+        </button>
+
+        <!-- Acceso Móvil / QR -->
+        <button type="button" id="btn-open-mobile" class="hdr-btn" aria-label="Conectar móvil QR">
+          <svg viewBox="0 0 24 24"><use href="#icon-qr"></use></svg>
+        </button>
+
+        <!-- Servicio 1: Configuración (Banco 50 → 9) -->
+        <button type="button" id="btn-open-config" class="hdr-btn" aria-label="Configuración 50 a 9">
+          <svg viewBox="0 0 24 24"><use href="#icon-gear"></use></svg>
+        </button>
+
+        <!-- Servicio 2: Detector de Tonalidad por Micrófono (Clave de Sol) -->
+        <button type="button" id="btn-open-tonality" class="hdr-btn" aria-label="Detector de tonalidad Clave de Sol">
+          <svg viewBox="0 0 24 24"><use href="#icon-clef"></use></svg>
+        </button>
+
+        <!-- Selector de Eje Y (Filtro / Volumen / Distorsión) -->
+        <button type="button" id="btn-yaxis" class="hdr-btn is-on-cyan" data-mode="filter" aria-label="Modo de expresión eje Y">
+          <svg viewBox="0 0 24 24"><use href="#icon-yaxis-filter"></use></svg>
+        </button>
+
+        <!-- Interruptor Key-Strike (⚡) -->
+        <button type="button" id="btn-keystrike" class="hdr-btn is-on-amber" aria-label="Key-Strike vs Pure Gate">
+          <span class="led-dot on-amber"></span>
+          <svg viewBox="0 0 24 24"><use href="#icon-bolt"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- BARRA DE ESTADO OLED ESTÁTICA (Sonido · Acompañamiento · Batería) -->
+    <div class="hw-status-strip" aria-live="polite">
+      <button type="button" class="status-pill is-sound" id="status-pill-sound" title="Sonido activo (pulsa para configurar)">
+        <svg viewBox="0 0 24 24"><use href="#icon-sound"></use></svg>
+        <span class="status-pill-text" id="status-sound-name">Bruma</span>
+      </button>
+      <button type="button" class="status-pill is-accomp" id="status-pill-accomp" title="Acompañamiento activo (pulsa para configurar)">
+        <svg viewBox="0 0 24 24"><use href="#icon-arp"></use></svg>
+        <span class="status-pill-text" id="status-accomp-name">Manual</span>
+      </button>
+      <button type="button" class="status-pill is-drum" id="status-pill-drum" title="Batería activa (pulsa para configurar)">
+        <svg viewBox="0 0 24 24"><use href="#icon-drum"></use></svg>
+        <span class="status-pill-text" id="status-drum-name">Lo-Fi</span>
+      </button>
+    </div>
+
+    <!-- CUERPO: PANEL DE CONTROL + SUPERFICIE DE 7 TECLAS EN ZIG-ZAG -->
+    <main class="hw-main">
+      <!-- PANEL DE CONTROL (Izquierda en horizontal / Arriba en vertical) -->
+      <section class="control-deck" id="control-deck" aria-label="Panel de control">
+        <!-- FILA SUPERIOR DE MÓDULOS: Bloque Izquierdo (4 controles) + Tonalidad (2x2) -->
+        <div class="deck-grid-top">
+          <!-- Bloque Izquierdo: 1. Modo, 2. Humanizador, 3. Reverb, 4. Acompañamiento 0-9 -->
+          <div class="hw-module module-left-stack">
+            <!-- 1. Modo Melodía / Acordes -->
+            <button type="button" id="btn-play-mode" class="hw-btn stack-btn" aria-label="Modo Melodía o Acordes">
+              <span class="led-dot on-amber"></span>
+              <svg viewBox="0 0 24 24"><use href="#icon-mode-chord"></use></svg>
+            </button>
+
+            <!-- 2. Humanizador (0 a 3 LEDs cian) -->
+            <button type="button" id="btn-humanize" class="hw-btn stack-btn" aria-label="Humanizador 0 a 3">
+              <svg viewBox="0 0 24 24"><use href="#icon-humanize"></use></svg>
+              <span class="led-strip-3">
+                <span class="led-dot" id="hum-led-1"></span>
+                <span class="led-dot" id="hum-led-2"></span>
+                <span class="led-dot" id="hum-led-3"></span>
+              </span>
+            </button>
+
+            <!-- 3. Reverb (0 a 3 LEDs violeta, 0 por defecto) -->
+            <button type="button" id="btn-reverb" class="hw-btn stack-btn" aria-label="Reverb 0 a 3">
+              <svg viewBox="0 0 24 24"><use href="#icon-reverb"></use></svg>
+              <span class="led-strip-3">
+                <span class="led-dot" id="rev-led-1"></span>
+                <span class="led-dot" id="rev-led-2"></span>
+                <span class="led-dot" id="rev-led-3"></span>
+              </span>
+            </button>
+
+            <!-- 4. Acompañamiento Automático (0 a 9 con ◀ y ▶) -->
+            <div class="accomp-row">
+              <button type="button" id="btn-accomp-prev" class="hw-btn arrow-btn" aria-label="Acompañamiento anterior">◀</button>
+              <div id="accomp-screen" class="accomp-screen" role="button" tabindex="0" aria-label="Patrón de acompañamiento">
+                <svg viewBox="0 0 24 24"><use href="#icon-arp"></use></svg>
+                <span id="accomp-val">0</span>
+              </div>
+              <button type="button" id="btn-accomp-next" class="hw-btn arrow-btn" aria-label="Acompañamiento siguiente">▶</button>
+            </div>
+          </div>
+
+          <!-- Bloque de Tonalidad (Cuadrícula 2×2: Tónica, ▲, M/m, ▼) -->
+          <div class="hw-module module-tonality">
+            <div id="tonic-display" class="tonic-display">DO</div>
+            <button type="button" id="btn-tonic-up" class="hw-btn arrow-btn" aria-label="Subir semitono">▲</button>
+            <button type="button" id="btn-scale-mode" class="hw-btn mode-toggle-btn is-major" aria-label="Alternar Mayor o menor">M</button>
+            <button type="button" id="btn-tonic-down" class="hw-btn arrow-btn" aria-label="Bajar semitono">▼</button>
+          </div>
+        </div>
+
+        <!-- FILA INTERMEDIA DE MÓDULOS: (Octava + Sonido) y (Tempo/Metrónomo + Batería) -->
+        <div class="deck-grid-mid">
+          <!-- Bloque Combinado Octava + Sonido -->
+          <div class="hw-module module-dual-columns">
+            <!-- Columna Octava (-2..+2) -->
+            <div class="dual-col">
+              <div class="mini-screen screen-octave">
+                <svg viewBox="0 0 24 24"><use href="#icon-octave"></use></svg>
+                <span id="octave-val">0</span>
+              </div>
+              <div class="col-arrows-2">
+                <button type="button" id="btn-oct-up" class="hw-btn arrow-btn" aria-label="Subir octava">▲</button>
+                <button type="button" id="btn-oct-down" class="hw-btn arrow-btn" aria-label="Bajar octava">▼</button>
+              </div>
+            </div>
+
+            <!-- Columna Sonido (1..9) -->
+            <div class="dual-col">
+              <div class="mini-screen screen-sound">
+                <svg viewBox="0 0 24 24"><use href="#icon-sound"></use></svg>
+                <span id="sound-val">1</span>
+              </div>
+              <div class="col-arrows-2">
+                <button type="button" id="btn-sound-up" class="hw-btn arrow-btn" aria-label="Siguiente sonido">▲</button>
+                <button type="button" id="btn-sound-down" class="hw-btn arrow-btn" aria-label="Anterior sonido">▼</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloque Combinado Tempo/Metrónomo + Batería 4/4 -->
+          <div class="hw-module module-dual-columns">
+            <!-- Columna Tempo / BPM + Metrónomo (Tap Tempo + Toggle) -->
+            <div class="dual-col">
+              <div id="tempo-screen" class="mini-screen screen-tempo" title="Toques seguidos = Tap Tempo">
+                <span class="led-dot" id="metro-led"></span>
+                <span id="bpm-val">92</span>
+              </div>
+              <div class="col-arrows-3">
+                <button type="button" id="btn-metro-toggle" class="hw-btn metro-tap-btn" aria-label="Metrónomo y Tap Tempo">
+                  <svg viewBox="0 0 24 24" style="width:12px;height:12px;"><use href="#icon-metronome"></use></svg>
+                </button>
+                <button type="button" id="btn-bpm-up" class="hw-btn arrow-btn" aria-label="Subir BPM">▲</button>
+                <button type="button" id="btn-bpm-down" class="hw-btn arrow-btn" aria-label="Bajar BPM">▼</button>
+              </div>
+            </div>
+
+            <!-- Columna Batería 4/4 (1..9) -->
+            <div class="dual-col">
+              <div class="mini-screen screen-drum">
+                <svg viewBox="0 0 24 24"><use href="#icon-drum"></use></svg>
+                <span id="drum-val">1</span>
+              </div>
+              <div class="col-arrows-3">
+                <button type="button" id="btn-drum-toggle" class="hw-btn drum-play-btn" aria-label="Play o Stop Batería">
+                  <svg viewBox="0 0 24 24" style="width:12px;height:12px;"><use href="#icon-play"></use></svg>
+                </button>
+                <button type="button" id="btn-drum-up" class="hw-btn arrow-btn" aria-label="Siguiente batería">▲</button>
+                <button type="button" id="btn-drum-down" class="hw-btn arrow-btn" aria-label="Anterior batería">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BARRA DE LOOPER (4 LEDs de pulso + barra de progreso + REC / PLAY / BORRAR) -->
+        <div class="module-looper">
+          <div class="looper-status-bar">
+            <div class="beat-leds">
+              <span class="led-dot" id="beat-led-0"></span>
+              <span class="led-dot" id="beat-led-1"></span>
+              <span class="led-dot" id="beat-led-2"></span>
+              <span class="led-dot" id="beat-led-3"></span>
+            </div>
+            <div class="loop-progress-track">
+              <div class="loop-progress-fill" id="loop-progress-fill"></div>
+            </div>
+            <span class="loop-bars-badge" id="loop-bars-badge">0B</span>
+          </div>
+
+          <div class="looper-controls">
+            <button type="button" id="btn-looper-rec" class="hw-btn looper-btn" aria-label="Grabar bucle">
+              <span class="led-dot" id="looper-rec-led"></span>
+              <svg viewBox="0 0 24 24"><use href="#icon-rec"></use></svg>
+            </button>
+            <button type="button" id="btn-looper-play" class="hw-btn looper-btn" aria-label="Reproducir o parar bucle">
+              <span class="led-dot" id="looper-play-led"></span>
+              <svg viewBox="0 0 24 24"><use href="#icon-play"></use></svg>
+            </button>
+            <button type="button" id="btn-looper-clear" class="hw-btn looper-btn" aria-label="Borrar bucle">
+              <svg viewBox="0 0 24 24"><use href="#icon-trash"></use></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SUPERFICIE DE 7 TECLAS EN ZIG-ZAG (3 arriba: II, IV, VI / 4 abajo: I, III, V, VII) -->
+      <section class="keyboard-bay" id="keyboard-surface" aria-label="Teclado diatónico de 7 teclas">
+        <!-- Fila Superior (3 teclas: II=Re/S, IV=Fa/D, VI=La/F) -->
+        <div class="key-row key-row-top">
+          <div class="key-pad" data-degree="1" role="button" tabindex="0">
+            <span class="key-roman">II</span>
+            <span class="key-shortcut">S</span>
+            <span class="key-note">RE</span>
+            <span class="key-chord">Rem</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+
+          <div class="key-pad" data-degree="3" role="button" tabindex="0">
+            <span class="key-roman">IV</span>
+            <span class="key-shortcut">D</span>
+            <span class="key-note">FA</span>
+            <span class="key-chord">Fa</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+
+          <div class="key-pad" data-degree="5" role="button" tabindex="0">
+            <span class="key-roman">VI</span>
+            <span class="key-shortcut">F</span>
+            <span class="key-note">LA</span>
+            <span class="key-chord">Lam</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+        </div>
+
+        <!-- Fila Inferior (4 teclas: I=Do/Z, III=Mi/X, V=Sol/C, VII=Si/V) -->
+        <div class="key-row key-row-bottom">
+          <div class="key-pad" data-degree="0" role="button" tabindex="0">
+            <span class="key-roman">I</span>
+            <span class="key-shortcut">Z</span>
+            <span class="key-note">DO</span>
+            <span class="key-chord">Do</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+
+          <div class="key-pad" data-degree="2" role="button" tabindex="0">
+            <span class="key-roman">III</span>
+            <span class="key-shortcut">X</span>
+            <span class="key-note">MI</span>
+            <span class="key-chord">Mim</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+
+          <div class="key-pad" data-degree="4" role="button" tabindex="0">
+            <span class="key-roman">V</span>
+            <span class="key-shortcut">C</span>
+            <span class="key-note">SOL</span>
+            <span class="key-chord">Sol</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+
+          <div class="key-pad" data-degree="6" role="button" tabindex="0">
+            <span class="key-roman">VII</span>
+            <span class="key-shortcut">V</span>
+            <span class="key-note">SI</span>
+            <span class="key-chord">Si°</span>
+            <div class="key-expr-track"><div class="key-expr-fill"></div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- =======================================================
+         SERVICIO 1: MODAL DE CONFIGURACIÓN (BANCO 50 → 9)
+         ======================================================= -->
+    <div id="modal-config" class="hw-modal-backdrop" hidden>
+      <div class="hw-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-config-title">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-config-title">
+            <svg viewBox="0 0 24 24"><use href="#icon-gear"></use></svg>
+            <span>BANCO 50 → 9</span>
+          </div>
+          <button type="button" id="btn-close-config" class="modal-close-btn" aria-label="Cerrar">✕</button>
+        </div>
+
+        <div class="config-tabs">
+          <button type="button" id="tab-btn-sounds" class="config-tab-btn is-active">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;"><use href="#icon-sound"></use></svg>
+            <span>SONIDOS (50)</span>
+          </button>
+          <button type="button" id="tab-btn-accomp" class="config-tab-btn">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;"><use href="#icon-arp"></use></svg>
+            <span>ACOMP. (50)</span>
+          </button>
+          <button type="button" id="tab-btn-drums" class="config-tab-btn">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;"><use href="#icon-drum"></use></svg>
+            <span>BATERÍAS (50)</span>
+          </button>
+        </div>
+
+        <div class="config-toolbar">
+          <span>Elige hasta 9 favoritos (numerados 1–9 por orden)</span>
+          <span id="config-slots-count" class="config-slots-pill">9 / 9</span>
+        </div>
+
+        <div id="config-list-container" class="config-list-container"></div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         SERVICIO 2: DETECTOR DE TONALIDAD POR MICRÓFONO (CLAVE DE SOL)
+         ======================================================= -->
+    <div id="modal-tonality" class="hw-modal-backdrop" hidden>
+      <div class="hw-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-tonality-title">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-tonality-title">
+            <svg viewBox="0 0 24 24"><use href="#icon-clef"></use></svg>
+            <span>DETECTOR DE TONALIDAD (20s)</span>
+          </div>
+          <button type="button" id="btn-close-tonality" class="modal-close-btn" aria-label="Cerrar">✕</button>
+        </div>
+
+        <div class="tonality-body">
+          <div class="mic-controls-row">
+            <button type="button" id="btn-mic-toggle" class="hw-btn mic-toggle-btn">
+              <svg viewBox="0 0 24 24"><use href="#icon-mic"></use></svg>
+              <span id="mic-btn-label">ABRIR MICRÓFONO</span>
+            </button>
+            <button type="button" id="btn-mic-demo" class="hw-btn mic-action-btn" title="Inyectar canto de prueba">
+              DEMO VOZ
+            </button>
+            <button type="button" id="btn-mic-clear" class="hw-btn mic-action-btn">
+              REINICIAR 20s
+            </button>
+          </div>
+
+          <div class="mic-telemetry-box">
+            <div class="telemetry-top">
+              <span id="live-pitch-badge" class="live-pitch-badge">Micrófono en pausa</span>
+              <span id="buffer-time-badge" class="buffer-time-badge">0.0s / 20s</span>
+            </div>
+            <div class="buffer-progress-bar">
+              <div id="buffer-progress-fill" class="buffer-progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="detected-key-panel">
+            <span class="detected-label">Tonalidad Estimada (Notas en Amarillo y Verde)</span>
+            <div id="detected-key-value" class="detected-key-value">— / —</div>
+            <div class="apply-key-actions">
+              <button type="button" id="btn-apply-major" class="hw-btn apply-key-btn btn-major" disabled>
+                APLICAR MAYOR
+              </button>
+              <button type="button" id="btn-apply-minor" class="hw-btn apply-key-btn btn-minor" disabled>
+                APLICAR MENOR
+              </button>
+            </div>
+          </div>
+
+          <div class="heatmap-legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--heat-red)"></span>Rojo: mínima</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--heat-orange)"></span>Naranja: baja</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--heat-yellow)"></span>Amarillo: frecuente</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:var(--heat-green)"></span>Verde: dominante</span>
+          </div>
+
+          <!-- Teclado cromático de 1 octava con referencia sonora al pulsar -->
+          <div class="chromatic-stage">
+            <div class="chromatic-hint">Toca cualquier tecla para escuchar la nota de referencia vocal</div>
+            <div class="chromatic-keyboard">
+              <!-- 7 Teclas Blancas -->
+              <div class="chrom-key-white" data-pc="0" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Do</span>
+              </div>
+              <div class="chrom-key-white" data-pc="2" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Re</span>
+              </div>
+              <div class="chrom-key-white" data-pc="4" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Mi</span>
+              </div>
+              <div class="chrom-key-white" data-pc="5" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Fa</span>
+              </div>
+              <div class="chrom-key-white" data-pc="7" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Sol</span>
+              </div>
+              <div class="chrom-key-white" data-pc="9" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">La</span>
+              </div>
+              <div class="chrom-key-white" data-pc="11" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Si</span>
+              </div>
+
+              <!-- 5 Teclas Negras -->
+              <div class="chrom-key-black" data-pc="1" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Do#</span>
+              </div>
+              <div class="chrom-key-black" data-pc="3" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Re#</span>
+              </div>
+              <div class="chrom-key-black" data-pc="6" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Fa#</span>
+              </div>
+              <div class="chrom-key-black" data-pc="8" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">Sol#</span>
+              </div>
+              <div class="chrom-key-black" data-pc="10" data-heat="0">
+                <div class="chrom-heat-bar"></div>
+                <span class="chrom-heat-dot"></span>
+                <span class="chrom-key-label">La#</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL ESTUDIO DE MAQUETA (2 PISTAS: MÚSICA + VOZ, FX Y RECORTE)
+         ======================================================= -->
+    <div id="modal-demo-result" class="hw-modal-backdrop" hidden>
+      <div class="hw-modal-card demo-studio-card" role="dialog" aria-modal="true" aria-labelledby="modal-demo-title">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-demo-title">
+            <svg viewBox="0 0 24 24" style="stroke:var(--led-ruby-bright);"><use href="#icon-mic"></use></svg>
+            <span>ESTUDIO DE MAQUETA (2 PISTAS)</span>
+          </div>
+          <button type="button" id="btn-close-demo-result" class="modal-close-btn" aria-label="Cerrar">✕</button>
+        </div>
+
+        <div class="demo-studio-body">
+          <div id="demo-result-warning" class="demo-result-warning" hidden></div>
+
+          <!-- Forma de onda de 2 pistas (Verde = Música, Ámbar = Voz) + Recorte -->
+          <div class="studio-wave-box">
+            <div class="studio-wave-header">
+              <span class="wave-legend">
+                <span class="legend-dot" style="background:var(--led-emerald-bright)"></span>Música
+                <span class="legend-dot" style="background:var(--led-amber-bright);margin-left:8px;"></span>Voz
+              </span>
+              <span id="studio-trim-readout" class="studio-trim-readout">0:00.0 — 0:00.0</span>
+            </div>
+            <canvas id="demo-waveform-canvas" class="demo-waveform-canvas" width="520" height="84"></canvas>
+
+            <div class="trim-sliders-grid">
+              <label class="trim-slider-row">
+                <span>Inicio</span>
+                <input type="range" id="trim-start-range" min="0" max="1000" value="0" />
+                <span id="trim-start-val" class="slider-val">0:00.0</span>
+              </label>
+              <label class="trim-slider-row">
+                <span>Final</span>
+                <input type="range" id="trim-end-range" min="0" max="1000" value="1000" />
+                <span id="trim-end-val" class="slider-val">0:00.0</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Mezclador de 2 Pistas (Volumen Música + Volumen Voz) -->
+          <div class="studio-mixer-box">
+            <label class="mixer-row">
+              <span class="mixer-label is-music">MÚSICA</span>
+              <input type="range" id="mix-music-vol" min="0" max="150" value="90" />
+              <span id="mix-music-val" class="slider-val">90%</span>
+            </label>
+            <label class="mixer-row" id="mix-voice-row">
+              <span class="mixer-label is-voice">VOZ</span>
+              <input type="range" id="mix-voice-vol" min="0" max="180" value="115" />
+              <span id="mix-voice-val" class="slider-val">115%</span>
+            </label>
+            <div class="sync-row" id="mix-sync-row">
+              <span class="mixer-label is-sync" title="Compensación de latencia entre Voz y Música">SINCRO</span>
+              <div class="sync-controls">
+                <button type="button" id="btn-sync-minus" class="hw-btn sync-mini-btn" title="Adelantar voz 10 ms">-10</button>
+                <input type="range" id="mix-voice-sync" min="-400" max="150" step="5" value="-110" />
+                <button type="button" id="btn-sync-plus" class="hw-btn sync-mini-btn" title="Retrasar voz 10 ms">+10</button>
+                <button type="button" id="btn-sync-auto" class="hw-btn sync-auto-btn" title="Auto-alinear voz con los golpes de música">AUTO</button>
+              </div>
+              <span id="mix-sync-val" class="slider-val">-110ms</span>
+            </div>
+          </div>
+
+          <!-- Efectos dedicados para la Voz: Eco (0-3 LEDs) y Chorus (0-3 LEDs) -->
+          <div class="studio-fx-grid">
+            <button type="button" id="btn-voice-echo" class="hw-btn studio-fx-btn">
+              <span>ECO VOZ</span>
+              <span class="led-strip-3">
+                <span class="led-dot" id="echo-led-1"></span>
+                <span class="led-dot" id="echo-led-2"></span>
+                <span class="led-dot" id="echo-led-3"></span>
+              </span>
+            </button>
+            <button type="button" id="btn-voice-chorus" class="hw-btn studio-fx-btn">
+              <span>CHORUS VOZ</span>
+              <span class="led-strip-3">
+                <span class="led-dot" id="chorus-led-1"></span>
+                <span class="led-dot" id="chorus-led-2"></span>
+                <span class="led-dot" id="chorus-led-3"></span>
+              </span>
+            </button>
+          </div>
+
+          <!-- Botones de Escucha en Vivo y Exportación Definitiva -->
+          <div class="studio-actions-grid">
+            <button type="button" id="btn-demo-preview-play" class="hw-btn studio-action-btn is-play">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;"><use href="#icon-play"></use></svg>
+              <span id="demo-preview-label">ESCUCHAR MEZCLA</span>
+            </button>
+            <button type="button" id="btn-download-demo-wav" class="hw-btn studio-action-btn is-export">
+              EXPORTAR (.WAV)
+            </button>
+          </div>
+          <button type="button" id="btn-share-demo" class="hw-btn studio-action-btn is-share" hidden>
+            COMPARTIR MAQUETA (.WAV)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =======================================================
+         MODAL DE CONEXIÓN MÓVIL (QR + HTTPS)
+         ======================================================= -->
+    <div id="modal-mobile" class="hw-modal-backdrop" hidden>
+      <div class="hw-modal-card" style="max-height:420px;max-width:500px;" role="dialog" aria-modal="true">
+        <div class="modal-header">
+          <div class="modal-title">
+            <svg viewBox="0 0 24 24"><use href="#icon-qr"></use></svg>
+            <span>PROBAR EN EL MÓVIL</span>
+          </div>
+          <button type="button" id="btn-close-mobile" class="modal-close-btn" aria-label="Cerrar">✕</button>
+        </div>
+        <div id="mobile-connect-info" style="padding:18px;display:flex;align-items:center;justify-content:center;flex:1;">
+          Cargando datos de red local...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD de diagnóstico (?debug=1) -->
+  <div id="debug-hud" class="debug-hud" hidden></div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

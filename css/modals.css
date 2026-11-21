@@ -1,0 +1,767 @@
+/* =========================================================
+   MODALES SUPERPUESTOS (CONFIGURACIÓN 50→9, CLAVE DE SOL, QR)
+   ========================================================= */
+.hw-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 7, 9, 0.86);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.hw-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.hw-modal-card {
+  width: 100%;
+  max-width: 680px;
+  height: 100%;
+  max-height: 640px;
+  background: var(--chassis-bg);
+  border: 1.5px solid var(--chassis-border);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  flex: 0 0 auto;
+  height: 44px;
+  background: var(--recess-bg);
+  border-bottom: 1px solid var(--recess-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--text-primary);
+}
+
+.modal-title svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--led-amber-bright);
+  fill: none;
+  stroke-width: 2;
+}
+
+.modal-close-btn {
+  width: 30px;
+  height: 30px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 7px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:active {
+  background: var(--btn-bg-active);
+}
+
+/* =========================================================
+   SERVICIO 1: CONFIGURACIÓN (BANCO 50 → 9)
+   ========================================================= */
+.config-tabs {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  padding: 8px 10px;
+  background: #101216;
+  border-bottom: 1px solid var(--recess-border);
+}
+
+.config-tab-btn {
+  height: 34px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 7px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 4px;
+}
+
+.config-tab-btn.is-active {
+  color: var(--led-emerald-bright);
+  border-color: rgba(16, 185, 129, 0.55);
+  box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.16);
+}
+
+.config-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: #0d0f13;
+  border-bottom: 1px solid #1b1e25;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.config-slots-pill {
+  color: var(--led-amber-bright);
+  font-weight: 800;
+}
+
+.config-list-container {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bank-item {
+  display: grid;
+  grid-template-columns: 38px 1fr 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #101217;
+  border: 1px solid #1e222b;
+  border-radius: 8px;
+  transition: border-color 100ms ease, background 100ms ease;
+}
+
+.bank-item.is-selected {
+  background: #141920;
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.bank-slot-btn {
+  width: 32px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--screen-bg);
+  border: 1.5px solid #2a2f3a;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bank-item.is-selected .bank-slot-btn {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: var(--led-emerald-bright);
+  color: var(--led-emerald-bright);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+}
+
+.bank-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.bank-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bank-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.bank-preview-btn {
+  width: 36px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bank-preview-btn.is-previewing {
+  color: var(--led-amber-bright);
+  border-color: var(--led-amber);
+  box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
+.bank-preview-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* =========================================================
+   SERVICIO 2: DETECTOR DE TONALIDAD POR MICRÓFONO (CLAVE DE SOL)
+   ========================================================= */
+.tonality-body {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: space-between;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.mic-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mic-toggle-btn {
+  flex: 1 1 150px;
+  height: 36px;
+  padding: 0 12px;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.mic-toggle-btn.is-listening {
+  color: var(--led-ruby-bright);
+  border-color: var(--led-ruby);
+  box-shadow: inset 0 0 14px rgba(239, 68, 68, 0.25);
+}
+
+.mic-action-btn {
+  height: 36px;
+  padding: 0 10px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Barra de buffer de 20 segundos y lectura instantánea */
+.mic-telemetry-box {
+  background: var(--recess-bg);
+  border: 1px solid var(--recess-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.telemetry-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.live-pitch-badge {
+  color: var(--led-cyan-bright);
+  font-weight: 800;
+}
+
+.buffer-time-badge {
+  color: var(--text-secondary);
+}
+
+.buffer-progress-bar {
+  width: 100%;
+  height: 5px;
+  background: #060709;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.buffer-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--led-cyan) 0%, var(--led-emerald-bright) 100%);
+  transition: width 150ms linear;
+}
+
+/* Resultado de tonalidad estimada (Do M / La m) */
+.detected-key-panel {
+  background: #0d1015;
+  border: 1px solid #222733;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.detected-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detected-key-value {
+  font-family: var(--font-mono);
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 900;
+  color: var(--led-amber-bright);
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+
+.apply-key-actions {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.apply-key-btn {
+  height: 34px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.apply-key-btn.btn-major {
+  color: var(--led-emerald-bright);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.apply-key-btn.btn-minor {
+  color: var(--led-cyan-bright);
+  border-color: rgba(6, 182, 212, 0.45);
+}
+
+/* Leyenda de baremo de 4 niveles */
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* Teclado cromático de 1 octava (12 teclas: 7 blancas + 5 negras) con referencia sonora */
+.chromatic-stage {
+  flex: 1 1 140px;
+  min-height: 130px;
+  background: var(--recess-bg);
+  border: 1px solid var(--recess-border);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chromatic-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.chromatic-keyboard {
+  flex: 1 1 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  min-height: 105px;
+}
+
+.chrom-key-white {
+  background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
+  border: 1px solid #ffffff;
+  border-bottom: 4px solid #94a3b8;
+  border-radius: 7px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 7px;
+  cursor: pointer;
+  color: #0f172a;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.chrom-key-white:active,
+.chrom-key-white.is-playing {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.chrom-key-black {
+  position: absolute;
+  top: 0;
+  height: 60%;
+  width: 10.5%;
+  background: linear-gradient(180deg, #272b36 0%, #13161c 100%);
+  border: 1px solid #383e4c;
+  border-bottom: 4px solid #090a0d;
+  border-radius: 0 0 6px 6px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 5px;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+.chrom-key-black:active,
+.chrom-key-black.is-playing {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* Posiciones exactas de las 5 teclas negras (Do#, Re#, Fa#, Sol#, La#) */
+.chrom-key-black[data-pc="1"]  { left: 9.1%; }
+.chrom-key-black[data-pc="3"]  { left: 23.4%; }
+.chrom-key-black[data-pc="6"]  { left: 52.0%; }
+.chrom-key-black[data-pc="8"]  { left: 66.3%; }
+.chrom-key-black[data-pc="10"] { left: 80.6%; }
+
+/* Indicador de baremo de calor dentro de cada tecla cromática */
+.chrom-heat-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  opacity: 0.42;
+  pointer-events: none;
+  transition: height 120ms ease, background-color 120ms ease;
+}
+
+.chrom-heat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-bottom: 4px;
+  background: transparent;
+  z-index: 2;
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.chrom-key-label {
+  z-index: 2;
+  position: relative;
+}
+
+/* Niveles de calor 1..4 */
+[data-heat="1"] .chrom-heat-bar { background: var(--heat-red); }
+[data-heat="1"] .chrom-heat-dot { background: var(--heat-red); box-shadow: 0 0 6px var(--heat-red); }
+
+[data-heat="2"] .chrom-heat-bar { background: var(--heat-orange); }
+[data-heat="2"] .chrom-heat-dot { background: var(--heat-orange); box-shadow: 0 0 6px var(--heat-orange); }
+
+[data-heat="3"] .chrom-heat-bar { background: var(--heat-yellow); }
+[data-heat="3"] .chrom-heat-dot { background: var(--heat-yellow); box-shadow: 0 0 8px var(--heat-yellow); }
+
+[data-heat="4"] .chrom-heat-bar { background: var(--heat-green); }
+[data-heat="4"] .chrom-heat-dot { background: var(--heat-green); box-shadow: 0 0 10px var(--heat-green); }
+
+/* =========================================================
+   MODAL ESTUDIO DE MAQUETA (2 PISTAS: MÚSICA + VOZ, FX, RECORTE)
+   ========================================================= */
+.demo-studio-card {
+  max-width: 540px;
+  height: auto;
+  max-height: 94dvh;
+}
+
+.demo-studio-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.demo-result-warning {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--led-amber-bright);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 7px;
+  padding: 6px 10px;
+}
+
+.studio-wave-box {
+  background: var(--recess-bg);
+  border: 1px solid var(--recess-border);
+  border-radius: 9px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.studio-wave-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-secondary);
+}
+
+.wave-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.studio-trim-readout {
+  color: var(--led-cyan-bright);
+  font-weight: 800;
+}
+
+.demo-waveform-canvas {
+  width: 100%;
+  height: 76px;
+  background: var(--screen-bg);
+  border: 1px solid var(--screen-border);
+  border-radius: 6px;
+  display: block;
+}
+
+.trim-sliders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trim-slider-row,
+.mixer-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 48px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.trim-slider-row input[type="range"],
+.mixer-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--led-cyan-bright);
+  cursor: pointer;
+}
+
+.mixer-row.is-disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.studio-mixer-box {
+  background: var(--recess-bg);
+  border: 1px solid var(--recess-border);
+  border-radius: 9px;
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mixer-label {
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.mixer-label.is-music {
+  color: var(--led-emerald-bright);
+}
+
+.mixer-label.is-voice {
+  color: var(--led-amber-bright);
+}
+
+.mixer-label.is-sync {
+  color: var(--led-cyan-bright);
+}
+
+.sync-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 52px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding-top: 4px;
+  border-top: 1px solid #1b1f27;
+}
+
+.sync-row.is-disabled {
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.sync-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sync-controls input[type="range"] {
+  flex: 1 1 0;
+  min-width: 60px;
+  accent-color: var(--led-cyan-bright);
+  cursor: pointer;
+}
+
+.sync-mini-btn {
+  height: 24px;
+  padding: 0 6px;
+  font-size: 10px;
+  color: var(--text-primary);
+}
+
+.sync-auto-btn {
+  height: 24px;
+  padding: 0 7px;
+  font-size: 9.5px;
+  color: var(--led-cyan-bright);
+  border-color: rgba(6, 182, 212, 0.45);
+}
+
+.slider-val {
+  text-align: right;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-size: 11px;
+}
+
+.studio-fx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.studio-fx-btn {
+  height: 36px;
+  padding: 0 10px;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.studio-fx-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.studio-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.studio-action-btn {
+  width: 100%;
+  height: 38px;
+  font-size: 11.5px;
+  gap: 7px;
+}
+
+.studio-action-btn.is-play {
+  color: var(--led-cyan-bright);
+  border-color: rgba(6, 182, 212, 0.48);
+}
+
+.studio-action-btn.is-play.is-playing {
+  color: var(--led-amber-bright);
+  border-color: rgba(245, 158, 11, 0.7);
+  box-shadow: inset 0 0 12px rgba(245, 158, 11, 0.2);
+}
+
+.studio-action-btn.is-export {
+  color: var(--led-emerald-bright);
+  border-color: rgba(16, 185, 129, 0.58);
+  box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.16);
+}
+
+.studio-action-btn.is-share {
+  color: var(--led-violet-bright);
+  border-color: rgba(139, 92, 246, 0.5);
+}
