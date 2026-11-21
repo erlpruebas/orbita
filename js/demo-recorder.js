@@ -213,6 +213,57 @@ function encodeAudioBufferToWavBlob(audioBuffer) {
 }
 
 /**
+ * Codifica un AudioBuffer estéreo a MP3 real (192 kbps, MPEG-1 Layer III) usando lamejs local.
+ */
+function encodeAudioBufferToMp3Blob(audioBuffer, kbps = 192) {
+  const lame = window.lamejs;
+  if (!lame || typeof lame.Mp3Encoder !== 'function') {
+    return null;
+  }
+
+  const numChannels = Math.min(2, audioBuffer.numberOfChannels);
+  const sampleRate = audioBuffer.sampleRate;
+  const length = audioBuffer.length;
+  const encoder = new lame.Mp3Encoder(numChannels, sampleRate, kbps);
+
+  const chL = audioBuffer.getChannelData(0);
+  const chR = numChannels > 1 ? audioBuffer.getChannelData(1) : chL;
+
+  const blockSize = 1152;
+  const leftInt16 = new Int16Array(blockSize);
+  const rightInt16 = new Int16Array(blockSize);
+  const mp3Parts = [];
+
+  for (let i = 0; i < length; i += blockSize) {
+    const count = Math.min(blockSize, length - i);
+    const lSlice = count === blockSize ? leftInt16 : new Int16Array(count);
+    const rSlice = count === blockSize ? rightInt16 : new Int16Array(count);
+
+    for (let j = 0; j < count; j++) {
+      const sL = Math.max(-1, Math.min(1, chL[i + j]));
+      const sR = Math.max(-1, Math.min(1, chR[i + j]));
+      lSlice[j] = sL < 0 ? Math.round(sL * 0x8000) : Math.round(sL * 0x7FFF);
+      rSlice[j] = sR < 0 ? Math.round(sR * 0x8000) : Math.round(sR * 0x7FFF);
+    }
+
+    const encoded = numChannels > 1
+      ? encoder.encodeBuffer(lSlice, rSlice)
+      : encoder.encodeBuffer(lSlice);
+
+    if (encoded && encoded.length > 0) {
+      mp3Parts.push(new Uint8Array(encoded.buffer, encoded.byteOffset, encoded.byteLength));
+    }
+  }
+
+  const tail = encoder.flush();
+  if (tail && tail.length > 0) {
+    mp3Parts.push(new Uint8Array(tail.buffer, tail.byteOffset, tail.byteLength));
+  }
+
+  return new Blob(mp3Parts, { type: 'audio/mpeg' });
+}
+
+/**
  * Construye el grafo de mezcla de 2 pistas (Música + Voz con Chorus 0-3 y Eco 0-3).
  * Se usa de forma IDÉNTICA tanto para la preescucha en tiempo real como para el render offline .WAV.
  */
@@ -849,10 +900,25 @@ export async function renderFinalMixWav(settings) {
   }
 
   const renderedBuffer = await offCtx.startRendering();
-  const wavBlob = encodeAudioBufferToWavBlob(renderedBuffer);
+  const mp3Blob = encodeAudioBufferToMp3Blob(renderedBuffer, 192);
 
+  if (mp3Blob) {
+    return {
+      blob: mp3Blob,
+      mimeType: 'audio/mpeg',
+      ext: 'mp3',
+      filename: makeFilename('mp3'),
+      sizeKB: Math.max(1, Math.round(mp3Blob.size / 1024)),
+      durationSec: trimmedDur
+    };
+  }
+
+  // Respaldo automático a WAV solo si el codificador MP3 no estuviera disponible
+  const wavBlob = encodeAudioBufferToWavBlob(renderedBuffer);
   return {
     blob: wavBlob,
+    mimeType: 'audio/wav',
+    ext: 'wav',
     filename: makeFilename('wav'),
     sizeKB: Math.max(1, Math.round(wavBlob.size / 1024)),
     durationSec: trimmedDur

@@ -711,12 +711,12 @@ export function initModalsUI() {
     if (ok) setPreviewPlayBtnState(true);
   });
 
-  // Botón Exportar Mezcla Definitiva (.WAV)
+  // Botón Exportar Mezcla Definitiva (.MP3)
   document.getElementById('btn-download-demo-wav')?.addEventListener('click', async (e) => {
     const btn = e.currentTarget;
     const oldText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'MEZCLANDO...';
+    btn.textContent = 'GENERANDO MP3...';
     try {
       const rendered = await renderFinalMixWav(studioMix);
       if (rendered?.blob) {
@@ -728,17 +728,17 @@ export function initModalsUI() {
     }
   });
 
-  // Botón Compartir Maqueta (.WAV) en móvil
+  // Botón Compartir Maqueta (.MP3) en móvil
   document.getElementById('btn-share-demo')?.addEventListener('click', async (e) => {
     if (typeof navigator.share !== 'function') return;
     const btn = e.currentTarget;
     const oldText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'PREPARANDO...';
+    btn.textContent = 'PREPARANDO MP3...';
     try {
       const rendered = await renderFinalMixWav(studioMix);
       if (rendered?.blob) {
-        const file = new File([rendered.blob], rendered.filename, { type: 'audio/wav' });
+        const file = new File([rendered.blob], rendered.filename, { type: rendered.mimeType || 'audio/mpeg' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: 'Maqueta ÓRBITA',

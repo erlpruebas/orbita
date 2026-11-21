@@ -672,11 +672,11 @@
               <span id="demo-preview-label">ESCUCHAR MEZCLA</span>
             </button>
             <button type="button" id="btn-download-demo-wav" class="hw-btn studio-action-btn is-export">
-              EXPORTAR (.WAV)
+              EXPORTAR (.MP3)
             </button>
           </div>
           <button type="button" id="btn-share-demo" class="hw-btn studio-action-btn is-share" hidden>
-            COMPARTIR MAQUETA (.WAV)
+            COMPARTIR MAQUETA (.MP3)
           </button>
         </div>
       </div>
@@ -686,6 +686,7 @@
   <!-- HUD de diagnóstico (?debug=1) -->
   <div id="debug-hud" class="debug-hud" hidden></div>
 
+  <script src="./js/vendor/lame.min.js"></script>
   <script type="module" src="./js/main.js"></script>
 </body>
 </html>
