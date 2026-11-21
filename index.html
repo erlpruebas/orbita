@@ -140,14 +140,6 @@
         <line x1="12" y1="17" x2="12" y2="21"></line>
         <line x1="8" y1="21" x2="16" y2="21"></line>
       </symbol>
-
-      <!-- QR / Móvil -->
-      <symbol id="icon-qr" viewBox="0 0 24 24">
-        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-        <path d="M14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 18v3"></path>
-      </symbol>
     </defs>
   </svg>
 
@@ -166,11 +158,6 @@
           <span class="led-dot" id="demo-rec-led"></span>
           <svg viewBox="0 0 24 24"><use href="#icon-mic"></use></svg>
           <span id="demo-rec-timer" class="demo-rec-timer" hidden>0:00</span>
-        </button>
-
-        <!-- Acceso Móvil / QR -->
-        <button type="button" id="btn-open-mobile" class="hdr-btn" aria-label="Conectar móvil QR">
-          <svg viewBox="0 0 24 24"><use href="#icon-qr"></use></svg>
         </button>
 
         <!-- Servicio 1: Configuración (Banco 50 → 9) -->
@@ -691,24 +678,6 @@
           <button type="button" id="btn-share-demo" class="hw-btn studio-action-btn is-share" hidden>
             COMPARTIR MAQUETA (.WAV)
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- =======================================================
-         MODAL DE CONEXIÓN MÓVIL (QR + HTTPS)
-         ======================================================= -->
-    <div id="modal-mobile" class="hw-modal-backdrop" hidden>
-      <div class="hw-modal-card" style="max-height:420px;max-width:500px;" role="dialog" aria-modal="true">
-        <div class="modal-header">
-          <div class="modal-title">
-            <svg viewBox="0 0 24 24"><use href="#icon-qr"></use></svg>
-            <span>PROBAR EN EL MÓVIL</span>
-          </div>
-          <button type="button" id="btn-close-mobile" class="modal-close-btn" aria-label="Cerrar">✕</button>
-        </div>
-        <div id="mobile-connect-info" style="padding:18px;display:flex;align-items:center;justify-content:center;flex:1;">
-          Cargando datos de red local...
         </div>
       </div>
     </div>

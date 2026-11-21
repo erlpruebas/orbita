@@ -479,7 +479,6 @@ function openDemoStudioModal(session) {
 export function initModalsUI() {
   const modalConfig = document.getElementById('modal-config');
   const modalTonality = document.getElementById('modal-tonality');
-  const modalMobile = document.getElementById('modal-mobile');
   const modalDemo = document.getElementById('modal-demo-result');
 
   // --- ACCESO DIRECTO DESDE LA BARRA OLED ESTÁTICA ---
@@ -761,17 +760,7 @@ export function initModalsUI() {
     if (modalDemo) modalDemo.hidden = true;
   });
 
-  // --- SERVICIO 4: MODAL ACCESO MÓVIL / QR ---
-  document.getElementById('btn-open-mobile')?.addEventListener('click', async () => {
-    if (modalMobile) modalMobile.hidden = false;
-    await populateMobileModalInfo();
-  });
-
-  document.getElementById('btn-close-mobile')?.addEventListener('click', () => {
-    if (modalMobile) modalMobile.hidden = true;
-  });
-
-  [modalConfig, modalTonality, modalMobile, modalDemo].forEach((backdrop) => {
+  [modalConfig, modalTonality, modalDemo].forEach((backdrop) => {
     backdrop?.addEventListener('click', (e) => {
       if (e.target === backdrop) {
         stopAllPreviews();
@@ -782,53 +771,5 @@ export function initModalsUI() {
         backdrop.hidden = true;
       }
     });
-  });
-}
-
-async function populateMobileModalInfo() {
-  const container = document.getElementById('mobile-connect-info');
-  if (!container) return;
-
-  try {
-    const resp = await fetch('/api/network-info');
-    if (resp.ok) {
-      const data = await resp.json();
-      container.innerHTML = `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
-          <div style="background:#fff;padding:10px;border-radius:10px;width:170px;height:170px;display:flex;align-items:center;justify-content:center;">
-            ${data.qrSvg || ''}
-          </div>
-          <div style="font-family:var(--font-mono);font-size:12px;color:var(--led-emerald-bright);font-weight:800;">
-            ${data.httpsUrl}
-          </div>
-          <div style="font-size:12px;color:var(--text-secondary);max-width:460px;line-height:1.45;">
-            Escanea el QR con la cámara de tu móvil (conectado al mismo Wi-Fi).<br>
-            Usa la dirección <b>HTTPS (:3443)</b> para que Android/iOS permitan abrir el micrófono en la Clave de Sol y en el Estudio de Maquetas (la primera vez pulsa <i>"Opciones avanzadas → Continuar"</i>), o usa <b>${data.httpUrl}</b> para acceso directo.
-          </div>
-        </div>
-      `;
-      return;
-    }
-  } catch (_) {}
-
-  const curUrl = window.location.href;
-  container.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:12px;">
-      <div style="font-family:var(--font-mono);font-size:12px;color:var(--led-emerald-bright);word-break:break-all;">
-        <b>${curUrl}</b>
-      </div>
-      <div style="font-size:12px;color:var(--text-secondary);max-width:400px;line-height:1.45;">
-        Abre esta dirección HTTPS desde cualquier móvil o pulsa <b>"Añadir a pantalla de inicio"</b> en tu navegador para instalar ÓRBITA como app a pantalla completa con micrófono habilitado.
-      </div>
-      <button type="button" id="btn-copy-orbita-url" class="hw-btn" style="height:34px;padding:0 16px;font-size:11px;color:var(--led-cyan-bright);">
-        COPIAR ENLACE
-      </button>
-    </div>
-  `;
-  document.getElementById('btn-copy-orbita-url')?.addEventListener('click', async (ev) => {
-    try {
-      await navigator.clipboard.writeText(curUrl);
-      ev.currentTarget.textContent = '¡ENLACE COPIADO!';
-    } catch (_) {}
   });
 }
