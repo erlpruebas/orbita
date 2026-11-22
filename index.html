@@ -183,22 +183,6 @@
       </div>
     </header>
 
-    <!-- BARRA DE ESTADO OLED ESTÁTICA (Sonido · Acompañamiento · Batería) -->
-    <div class="hw-status-strip" aria-live="polite">
-      <button type="button" class="status-pill is-sound" id="status-pill-sound" title="Sonido activo (pulsa para configurar)">
-        <svg viewBox="0 0 24 24"><use href="#icon-sound"></use></svg>
-        <span class="status-pill-text" id="status-sound-name">Bruma</span>
-      </button>
-      <button type="button" class="status-pill is-accomp" id="status-pill-accomp" title="Acompañamiento activo (pulsa para configurar)">
-        <svg viewBox="0 0 24 24"><use href="#icon-arp"></use></svg>
-        <span class="status-pill-text" id="status-accomp-name">Manual</span>
-      </button>
-      <button type="button" class="status-pill is-drum" id="status-pill-drum" title="Batería activa (pulsa para configurar)">
-        <svg viewBox="0 0 24 24"><use href="#icon-drum"></use></svg>
-        <span class="status-pill-text" id="status-drum-name">Lo-Fi</span>
-      </button>
-    </div>
-
     <!-- CUERPO: PANEL DE CONTROL + SUPERFICIE DE 7 TECLAS EN ZIG-ZAG -->
     <main class="hw-main">
       <!-- PANEL DE CONTROL (Izquierda en horizontal / Arriba en vertical) -->
@@ -314,6 +298,22 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- BARRA DE ESTADO OLED ESTÁTICA (Sonido · Acompañamiento · Batería) justo debajo de Octava/Sonido y Tempo/Batería -->
+        <div class="hw-status-strip" aria-live="polite">
+          <button type="button" class="status-pill is-sound" id="status-pill-sound" title="Sonido activo (pulsa para configurar)">
+            <svg viewBox="0 0 24 24"><use href="#icon-sound"></use></svg>
+            <span class="status-pill-text" id="status-sound-name">Bruma</span>
+          </button>
+          <button type="button" class="status-pill is-accomp" id="status-pill-accomp" title="Acompañamiento activo (pulsa para configurar)">
+            <svg viewBox="0 0 24 24"><use href="#icon-arp"></use></svg>
+            <span class="status-pill-text" id="status-accomp-name">Manual</span>
+          </button>
+          <button type="button" class="status-pill is-drum" id="status-pill-drum" title="Batería activa (pulsa para configurar)">
+            <svg viewBox="0 0 24 24"><use href="#icon-drum"></use></svg>
+            <span class="status-pill-text" id="status-drum-name">Lo-Fi</span>
+          </button>
         </div>
 
         <!-- BARRA DE LOOPER (4 LEDs de pulso + barra de progreso + REC / PLAY / BORRAR) -->
