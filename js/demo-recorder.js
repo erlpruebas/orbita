@@ -411,20 +411,22 @@ export async function startDemoRecording(onStatusUpdate) {
   masterNode.connect(musicTapGain);
   musicTapGain.connect(musicSplitter);
 
-  // 2. Intentar abrir el micrófono con cancelación de eco (AEC)
+  // 2. Abrir micrófono en modo musical crudo (SIN filtros anti-ruido ni cancelación de eco
+  //    para capturar guitarra acústica, instrumentos y voz de forma natural sin recortes)
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     try {
       micStream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
         }
       });
       micSource = ctx.createMediaStreamSource(micStream);
       micHighpass = ctx.createBiquadFilter();
       micHighpass.type = 'highpass';
-      micHighpass.frequency.setValueAtTime(85, ctx.currentTime);
+      // Corte subgrave muy suave a 40 Hz para respetar plenamente los graves de la guitarra (Mi2 = 82 Hz)
+      micHighpass.frequency.setValueAtTime(40, ctx.currentTime);
 
       micGain = ctx.createGain();
       micGain.gain.setValueAtTime(1.15, ctx.currentTime);
@@ -433,14 +435,12 @@ export async function startDemoRecording(onStatusUpdate) {
       micHighpass.connect(micGain);
       hasMicActive = true;
 
-      // Medir latencia hardware real de salida (AudioContext) + entrada (MediaStreamTrack) + buffer AEC
+      // Medir latencia hardware real de salida (AudioContext) + entrada (MediaStreamTrack) sin retardo extra de AEC
       const outLatSec = (ctx.outputLatency || 0) + (ctx.baseLatency || 0);
       const trackSettings = micStream.getAudioTracks()[0]?.getSettings?.() || {};
       const inLatSec = typeof trackSettings.latency === 'number' ? trackSettings.latency : 0;
-      const aecBufferSec = 0.055; // Buffer típico del procesamiento WebRTC echoCancellation
-      const rawRoundTripMs = Math.round((outLatSec + inLatSec + aecBufferSec) * 1000);
-      // Si el navegador reporta 0 en outputLatency/latency, usar estimación conservadora realista (~110 ms)
-      detectedRoundTripMs = Math.max(75, Math.min(350, rawRoundTripMs < 75 ? 110 : rawRoundTripMs));
+      const rawRoundTripMs = Math.round((outLatSec + inLatSec) * 1000);
+      detectedRoundTripMs = Math.max(35, Math.min(300, rawRoundTripMs < 35 ? 60 : rawRoundTripMs));
     } catch (err) {
       hasMicActive = false;
       micWarningReason = err?.name === 'NotAllowedError'
